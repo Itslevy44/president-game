@@ -37,7 +37,9 @@ import {
   DEPUTY_CANDIDATES, 
   MINISTER_CANDIDATES, 
   SCENARIOS,
-  SPEECH_OPTIONS
+  SPEECH_OPTIONS,
+  PRESS_QUESTIONS,
+  DIPLOMACY_VISITS
 } from './constants';
 import { cn, formatCurrency } from './lib/utils';
 
@@ -56,11 +58,15 @@ export default function App() {
       defense: null,
       health: null,
       infrastructure: null,
+      foreign: null,
+      interior: null,
     },
     history: [],
     isGameOver: false,
     gamePhase: 'setup',
     currentScenario: null,
+    currentPressQuestion: null,
+    currentDiplomacyVisit: null,
     logs: ['Welcome, Mr. President. Your term begins today.'],
   });
 
@@ -121,7 +127,11 @@ export default function App() {
       const nextYear = prev.quarter === 4 ? prev.year + 1 : prev.year;
       
       // Random Event or Scenario
-      const isOppositionEvent = Math.random() > 0.7;
+      const rand = Math.random();
+      const isOppositionEvent = rand > 0.8;
+      const isPressConference = rand > 0.6 && rand <= 0.8;
+      const isDiplomacyVisit = rand > 0.4 && rand <= 0.6;
+      
       let randomScenario = SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
       
       if (isOppositionEvent) {
@@ -133,6 +143,30 @@ export default function App() {
         const msg = oppositionMsgs[Math.floor(Math.random() * oppositionMsgs.length)];
         updateStats({ approval: -5, stability: -5 });
         addLog(`OPPOSITION: ${msg}`);
+      }
+
+      if (isPressConference) {
+        const q = PRESS_QUESTIONS[Math.floor(Math.random() * PRESS_QUESTIONS.length)];
+        return {
+          ...prev,
+          year: nextYear,
+          quarter: nextQuarter,
+          gamePhase: 'press_conference',
+          currentPressQuestion: q,
+          logs: [`Year ${nextYear} Q${nextQuarter}: Press Conference scheduled.`, ...prev.logs]
+        };
+      }
+
+      if (isDiplomacyVisit) {
+        const v = DIPLOMACY_VISITS[Math.floor(Math.random() * DIPLOMACY_VISITS.length)];
+        return {
+          ...prev,
+          year: nextYear,
+          quarter: nextQuarter,
+          gamePhase: 'diplomacy_visit',
+          currentDiplomacyVisit: v,
+          logs: [`Year ${nextYear} Q${nextQuarter}: State Visit to ${v.country} scheduled.`, ...prev.logs]
+        };
       }
 
       // Minister Conflict
@@ -153,6 +187,18 @@ export default function App() {
         logs: [`Year ${nextYear} Q${nextQuarter}: Collected ${formatCurrency(taxRevenue)} in taxes.`, ...prev.logs]
       };
     });
+  };
+
+  const handlePressAnswer = (option: any) => {
+    updateStats(option.consequences.stats);
+    addLog(`PRESS: ${option.consequences.message}`);
+    setGame(prev => ({ ...prev, gamePhase: 'playing', currentPressQuestion: null }));
+  };
+
+  const handleDiplomacyObjective = (objective: any) => {
+    updateStats(objective.consequences.stats, objective.consequences.treasury);
+    addLog(`DIPLOMACY: ${objective.consequences.message}`);
+    setGame(prev => ({ ...prev, gamePhase: 'playing', currentDiplomacyVisit: null }));
   };
 
   const handleChoice = (choice: Scenario['choices'][0]) => {
@@ -267,7 +313,7 @@ export default function App() {
       } else {
         setGame(prev => {
           const newMinisters = { ...prev.ministers, [currentRole]: c };
-          const roles: (keyof GameState['ministers'])[] = ['finance', 'defense', 'health', 'infrastructure'];
+          const roles: (keyof GameState['ministers'])[] = ['finance', 'defense', 'health', 'infrastructure', 'foreign', 'interior'];
           const currentIndex = roles.indexOf(currentRole);
           
           if (currentIndex < roles.length - 1) {
@@ -331,6 +377,91 @@ export default function App() {
             ))}
           </div>
         </div>
+      </div>
+    );
+  };
+
+  const PressConferenceScreen = () => {
+    const q = game.currentPressQuestion;
+    if (!q) return null;
+    return (
+      <div className="h-screen bg-bg text-text-main flex flex-col items-center justify-center p-6">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-2xl w-full sleek-card p-8 space-y-8"
+        >
+          <div className="flex items-center gap-4 border-b border-border pb-6">
+            <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center text-accent">
+              <Mic2 size={24} />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">Press Conference</h2>
+              <p className="text-text-dim text-xs uppercase tracking-widest">{q.journalist} • {q.outlet}</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <p className="text-lg italic text-text-main">"{q.question}"</p>
+            <div className="grid gap-3">
+              {q.options.map((opt, i) => (
+                <button
+                  key={i}
+                  onClick={() => handlePressAnswer(opt)}
+                  className="sleek-btn p-4 text-left hover:bg-accent/10 transition-all"
+                >
+                  {opt.text}
+                </button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  };
+
+  const DiplomacyVisitScreen = () => {
+    const v = game.currentDiplomacyVisit;
+    if (!v) return null;
+    return (
+      <div className="h-screen bg-bg text-text-main flex flex-col items-center justify-center p-6">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-4xl w-full sleek-card overflow-hidden"
+        >
+          <img src={v.image} className="w-full h-64 object-cover" referrerPolicy="no-referrer" />
+          <div className="p-8 space-y-8">
+            <div className="flex justify-between items-end border-b border-border pb-6">
+              <div>
+                <h2 className="text-3xl font-bold">State Visit: {v.country}</h2>
+                <p className="text-text-dim mt-1">Meeting with {v.leader}</p>
+              </div>
+              <div className="w-16 h-10 bg-gradient-to-r from-blue-600 via-white to-blue-600 rounded-sm shadow-lg" />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-accent">Strategic Objectives</h3>
+                <p className="text-text-dim text-sm leading-relaxed">
+                  Your diplomatic team has identified several key opportunities for this visit. Choose your primary focus carefully.
+                </p>
+              </div>
+              <div className="grid gap-3">
+                {v.objectives.map((obj, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleDiplomacyObjective(obj)}
+                    className="sleek-btn p-4 text-left group"
+                  >
+                    <div className="font-bold text-sm group-hover:text-accent transition-colors">{obj.title}</div>
+                    <div className="text-[10px] text-text-dim mt-1">{obj.description}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     );
   };
@@ -587,6 +718,8 @@ export default function App() {
   if (game.gamePhase === 'setup') return <SetupScreen />;
   if (game.gamePhase === 'deputy_selection') return <SelectionScreen type="deputy" />;
   if (game.gamePhase === 'minister_selection') return <SelectionScreen type="minister" />;
+  if (game.gamePhase === 'press_conference') return <PressConferenceScreen />;
+  if (game.gamePhase === 'diplomacy_visit') return <DiplomacyVisitScreen />;
   
   return <MainDashboard />;
 }

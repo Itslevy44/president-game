@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Character, Scenario, Stats } from './types';
+import { Character, Scenario, Stats, PressQuestion, DiplomacyVisit } from './types';
 
 export const INITIAL_STATS: Stats = {
   economy: 50,
@@ -64,6 +64,14 @@ export const MINISTER_CANDIDATES: Record<string, Character[]> = {
       bonus: { economy: 20 },
       malus: { stability: -5 },
     },
+    {
+      id: 'fin-3',
+      name: 'Robert Ledger',
+      role: 'Finance Minister',
+      brief: 'Pragmatic accountant. Excellent at finding hidden waste.',
+      image: 'https://picsum.photos/seed/robert/400/400',
+      bonus: { economy: 5, stability: 5 },
+    },
   ],
   defense: [
     {
@@ -82,6 +90,14 @@ export const MINISTER_CANDIDATES: Record<string, Character[]> = {
       image: 'https://picsum.photos/seed/peace/400/400',
       bonus: { stability: 10 },
     },
+    {
+      id: 'def-3',
+      name: 'Admiral Tide',
+      role: 'Defense Minister',
+      brief: 'Naval expert. Focuses on coastal security and trade routes.',
+      image: 'https://picsum.photos/seed/tide/400/400',
+      bonus: { military: 5, economy: 5 },
+    },
   ],
   health: [
     {
@@ -91,6 +107,23 @@ export const MINISTER_CANDIDATES: Record<string, Character[]> = {
       brief: 'Expert in pandemic prevention and public health systems.',
       image: 'https://picsum.photos/seed/cure/400/400',
       bonus: { health: 15 },
+    },
+    {
+      id: 'heal-2',
+      name: 'Nurse Mercy',
+      role: 'Health Minister',
+      brief: 'Grassroots health advocate. High approval but low budget discipline.',
+      image: 'https://picsum.photos/seed/mercy/400/400',
+      bonus: { health: 10, approval: 10 },
+      malus: { economy: -5 },
+    },
+    {
+      id: 'heal-3',
+      name: 'Dr. Bio',
+      role: 'Health Minister',
+      brief: 'Biotech visionary. Focuses on future-proofing health.',
+      image: 'https://picsum.photos/seed/bio/400/400',
+      bonus: { health: 5, economy: 5 },
     },
   ],
   infrastructure: [
@@ -102,8 +135,170 @@ export const MINISTER_CANDIDATES: Record<string, Character[]> = {
       image: 'https://picsum.photos/seed/build/400/400',
       bonus: { economy: 5, stability: 5 },
     },
+    {
+      id: 'infra-2',
+      name: 'Sarah Steel',
+      role: 'Infrastructure Minister',
+      brief: 'Focuses on urban renewal and affordable housing.',
+      image: 'https://picsum.photos/seed/steel/400/400',
+      bonus: { approval: 10, stability: 5 },
+    },
+    {
+      id: 'infra-3',
+      name: 'Tom Road',
+      role: 'Infrastructure Minister',
+      brief: 'Logistics expert. Focuses on rural connectivity.',
+      image: 'https://picsum.photos/seed/road/400/400',
+      bonus: { economy: 10 },
+    },
+  ],
+  foreign: [
+    {
+      id: 'for-1',
+      name: 'Ambassador Grace',
+      role: 'Foreign Minister',
+      brief: 'Seasoned diplomat. Excellent at trade negotiations.',
+      image: 'https://picsum.photos/seed/grace/400/400',
+      bonus: { economy: 10, stability: 5 },
+    },
+    {
+      id: 'for-2',
+      name: 'Victor Global',
+      role: 'Foreign Minister',
+      brief: 'Aggressive nationalist. Focuses on national interest first.',
+      image: 'https://picsum.photos/seed/victor/400/400',
+      bonus: { military: 10 },
+      malus: { stability: -5 },
+    },
+    {
+      id: 'for-3',
+      name: 'Sofia Peace',
+      role: 'Foreign Minister',
+      brief: 'Humanitarian focus. Boosts international approval.',
+      image: 'https://picsum.photos/seed/sofia/400/400',
+      bonus: { approval: 15 },
+    },
+  ],
+  interior: [
+    {
+      id: 'int-1',
+      name: 'Chief Law',
+      role: 'Interior Minister',
+      brief: 'Strict law and order advocate.',
+      image: 'https://picsum.photos/seed/law/400/400',
+      bonus: { stability: 15 },
+      malus: { approval: -5 },
+    },
+    {
+      id: 'int-2',
+      name: 'Maria Community',
+      role: 'Interior Minister',
+      brief: 'Focuses on community policing and social cohesion.',
+      image: 'https://picsum.photos/seed/community/400/400',
+      bonus: { approval: 10, stability: 5 },
+    },
+    {
+      id: 'int-3',
+      name: 'David Order',
+      role: 'Interior Minister',
+      brief: 'Efficiency expert. Focuses on modernizing the civil service.',
+      image: 'https://picsum.photos/seed/order/400/400',
+      bonus: { economy: 5, stability: 5 },
+    },
   ],
 };
+
+export const PRESS_QUESTIONS: PressQuestion[] = [
+  {
+    id: 'pq-1',
+    journalist: 'John Reporter',
+    outlet: 'The National Times',
+    question: 'Mr. President, the cost of living is rising. What is your administration doing about it?',
+    options: [
+      {
+        text: 'We are implementing price controls on essential goods.',
+        consequences: { stats: { approval: 10, economy: -5 }, message: 'The public is relieved, but economists warn of shortages.' },
+      },
+      {
+        text: 'We are focusing on long-term economic growth to raise incomes.',
+        consequences: { stats: { economy: 5, approval: -5 }, message: 'The market responds well, but the public feels ignored.' },
+      },
+      {
+        text: 'The global situation is difficult, but we are managing.',
+        consequences: { stats: { stability: -5 }, message: 'Your answer is seen as evasive.' },
+      },
+    ],
+  },
+  {
+    id: 'pq-2',
+    journalist: 'Sarah News',
+    outlet: 'Global Watch',
+    question: 'There are rumors of instability in your cabinet. Can you comment?',
+    options: [
+      {
+        text: 'My cabinet is united and focused on the people.',
+        consequences: { stats: { stability: 5, approval: -5 }, message: 'A standard denial. Some are skeptical.' },
+      },
+      {
+        text: 'Healthy debate is a sign of a strong democracy.',
+        consequences: { stats: { approval: 5, stability: -5 }, message: 'The public appreciates the transparency.' },
+      },
+      {
+        text: 'I will not comment on baseless rumors.',
+        consequences: { stats: { stability: -10 }, message: 'Your silence fuels further speculation.' },
+      },
+    ],
+  },
+];
+
+export const DIPLOMACY_VISITS: DiplomacyVisit[] = [
+  {
+    id: 'visit-1',
+    country: 'United Republic of Aurum',
+    leader: 'President Gold',
+    image: 'https://picsum.photos/seed/diplomacy1/1920/1080',
+    objectives: [
+      {
+        id: 'obj-1',
+        title: 'Seek Development Funds',
+        description: 'Ask for a low-interest loan to fund infrastructure projects.',
+        consequences: { stats: { economy: 10 }, treasury: 500000000, message: 'Loan secured: +500M Ksh.' },
+      },
+      {
+        id: 'obj-2',
+        title: 'Negotiate Trade Agreement',
+        description: 'Open markets for our agricultural exports.',
+        consequences: { stats: { economy: 15, approval: 5 }, treasury: 0, message: 'Trade deal signed! Exports are booming.' },
+      },
+      {
+        id: 'obj-3',
+        title: 'Strengthen Military Alliance',
+        description: 'Joint military exercises and intelligence sharing.',
+        consequences: { stats: { military: 15, stability: 5 }, treasury: -50000000, message: 'Strategic partnership solidified.' },
+      },
+    ],
+  },
+  {
+    id: 'visit-2',
+    country: 'The Northern Federation',
+    leader: 'Chancellor Frost',
+    image: 'https://picsum.photos/seed/diplomacy2/1920/1080',
+    objectives: [
+      {
+        id: 'obj-4',
+        title: 'Energy Partnership',
+        description: 'Secure a steady supply of natural gas.',
+        consequences: { stats: { economy: 10, stability: 10 }, treasury: -200000000, message: 'Energy security guaranteed.' },
+      },
+      {
+        id: 'obj-5',
+        title: 'Technology Exchange',
+        description: 'Collaborate on AI and digital infrastructure.',
+        consequences: { stats: { economy: 15, health: 5 }, treasury: -100000000, message: 'Tech hub initiative launched.' },
+      },
+    ],
+  },
+];
 
 export const SCENARIOS: Scenario[] = [
   {
@@ -277,3 +472,4 @@ export const SPEECH_OPTIONS = {
   ],
   closings: ['God bless our country.', 'Forward ever, backward never.', 'Thank you, and good night.'],
 };
+

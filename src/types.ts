@@ -40,6 +40,37 @@ export interface Scenario {
   choices: ScenarioChoice[];
 }
 
+export interface PressQuestion {
+  id: string;
+  journalist: string;
+  outlet: string;
+  question: string;
+  options: {
+    text: string;
+    consequences: {
+      stats: Partial<Stats>;
+      message: string;
+    };
+  }[];
+}
+
+export interface DiplomacyVisit {
+  id: string;
+  country: string;
+  leader: string;
+  image: string;
+  objectives: {
+    id: string;
+    title: string;
+    description: string;
+    consequences: {
+      stats: Partial<Stats>;
+      treasury: number;
+      message: string;
+    };
+  }[];
+}
+
 export interface GameState {
   playerName: string;
   countryName: string;
@@ -54,10 +85,14 @@ export interface GameState {
     defense: Character | null;
     health: Character | null;
     infrastructure: Character | null;
+    foreign: Character | null;
+    interior: Character | null;
   };
   history: string[];
   isGameOver: boolean;
-  gamePhase: 'setup' | 'deputy_selection' | 'minister_selection' | 'playing' | 'ended';
+  gamePhase: 'setup' | 'deputy_selection' | 'minister_selection' | 'playing' | 'ended' | 'press_conference' | 'diplomacy_visit';
   currentScenario: Scenario | null;
+  currentPressQuestion: PressQuestion | null;
+  currentDiplomacyVisit: DiplomacyVisit | null;
   logs: string[];
 }
