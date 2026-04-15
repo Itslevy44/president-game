@@ -1,10 +1,10 @@
 {
-  "projectId": "gen-lang-client-0134830568",
-  "appId": "1:83662131904:web:9819d80976003ba536d325",
-  "apiKey": "AIzaSyAyTKaxK4uZwegnuUezTduF7jTGpwQYWcc",
-  "authDomain": "gen-lang-client-0134830568.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-55901f0d-0d9e-4e94-9b89-ed7b73230133",
-  "storageBucket": "gen-lang-client-0134830568.firebasestorage.app",
-  "messagingSenderId": "83662131904",
-  "measurementId": ""
+  "projectId": "president-game-2026",
+  "appId": "1:195854427931:web:67464bda20e5f4679bd5be",
+  "apiKey": "AIzaSyAXv29JsuIt3ngBAQXqPCcplDAQhTqrJ_g",
+  "authDomain": "president-game-2026.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "president-game-2026.firebasestorage.app",
+  "messagingSenderId": "195854427931",
+  "measurementId": "G-2S2HWNB409"
 }
