@@ -17,31 +17,31 @@ export const INITIAL_TREASURY = 1000000000; // 1 Billion Ksh
 
 export const DEPUTY_CANDIDATES: Character[] = [
   {
-    id: 'deputy-1',
-    name: 'Dr. Sarah Mbeki',
-    role: 'Economic Strategist',
-    brief: 'A former World Bank director. Highly competent in finance but lacks grassroots connection.',
-    image: 'https://picsum.photos/seed/sarah/400/400',
-    bonus: { economy: 15 },
-    malus: { approval: -5 },
+    id: 'deputy-loyalist',
+    name: 'Hon. Joseph Kiptoo',
+    role: 'The Loyalist',
+    brief: 'A party veteran with unwavering loyalty. Guarantees stability but lacks economic vision.',
+    image: 'https://picsum.photos/seed/loyalist/400/400',
+    bonus: { stability: 20 },
+    malus: { economy: -5 },
   },
   {
-    id: 'deputy-2',
-    name: 'General Marcus Thorne',
-    role: 'Security Specialist',
-    brief: 'A war hero with deep military ties. Ensures stability through strength but can be authoritarian.',
-    image: 'https://picsum.photos/seed/marcus/400/400',
-    bonus: { military: 15, stability: 5 },
-    malus: { approval: -10 },
-  },
-  {
-    id: 'deputy-3',
-    name: 'Elena Vance',
-    role: 'Social Reformer',
-    brief: 'Beloved by the youth and activists. Great for approval, but struggles with the old guard.',
-    image: 'https://picsum.photos/seed/elena/400/400',
-    bonus: { approval: 20 },
+    id: 'deputy-technocrat',
+    name: 'Dr. Amara Okafor',
+    role: 'The Technocrat',
+    brief: 'Former IMF economist. Brilliant with numbers but often clashes with political reality.',
+    image: 'https://picsum.photos/seed/technocrat/400/400',
+    bonus: { economy: 20 },
     malus: { stability: -10 },
+  },
+  {
+    id: 'deputy-populist',
+    name: 'Silas "The Voice" Mbeki',
+    role: 'The Populist',
+    brief: 'A charismatic former union leader. Massive public support but prone to corruption scandals.',
+    image: 'https://picsum.photos/seed/populist/400/400',
+    bonus: { approval: 25 },
+    malus: { economy: -10 },
   },
 ];
 
@@ -461,15 +461,64 @@ export const SCENARIOS: Scenario[] = [
       },
     ],
   },
+  {
+    id: 'infrastructure-highway',
+    title: 'The Great Highway Project',
+    description: 'Your Ministry of Infrastructure proposes a massive highway connecting the coast to the capital. It will cost Ksh 200 Million.',
+    image: 'https://picsum.photos/seed/highway/800/400',
+    choices: [
+      {
+        text: 'Approve Project: Invest Ksh 200M for long-term growth.',
+        consequences: {
+          stats: { economy: 15, approval: 5 },
+          treasury: -200000000,
+          message: 'The highway project begins! Economy is set to boom.',
+        },
+      },
+      {
+        text: 'Scale Down: Build a smaller road for Ksh 50M.',
+        consequences: {
+          stats: { economy: 5, approval: 2 },
+          treasury: -50000000,
+          message: 'A modest improvement, but critics call it a half-measure.',
+        },
+      },
+      {
+        text: 'Reject: We cannot afford this right now.',
+        consequences: {
+          stats: { economy: -5, approval: -5 },
+          treasury: 0,
+          message: 'Infrastructure continues to crumble. The public is disappointed.',
+        },
+      },
+    ],
+  },
 ];
 
 export const SPEECH_OPTIONS = {
-  openings: ['My fellow citizens,', 'People of this great nation,', 'Today, we stand at a crossroads,'],
-  middles: [
-    'We must work together to overcome these challenges.',
-    'Our strength lies in our unity and our shared vision.',
-    'The path ahead is difficult, but we will prevail.',
+  openings: [
+    'Citizens, in this time of Crisis,',
+    'People of this nation, in this time of Opportunity,',
+    'My fellow countrymen, in this time of Transition,'
   ],
-  closings: ['God bless our country.', 'Forward ever, backward never.', 'Thank you, and good night.'],
+  middles: [
+    'we must Unite to ensure our',
+    'we must Sacrifice to ensure our',
+    'we must Invest to ensure our'
+  ],
+  closings: [
+    'Future. God bless us all.',
+    'Security. Forward ever.',
+    'Prosperity. Thank you.'
+  ],
+};
+
+export const SCENE_PROMPTS = {
+  diplomat: 'Presidential Jet Air Force One style on a sunset tarmac, cinematic lighting, high detail',
+  opposition: 'Charismatic leader speaking at a podium with a rival party logo, looking defiant, political rally atmosphere',
+  unrest: 'High-contrast image of citizens holding placards in a city square, smoke in distance, dramatic lighting',
+  media: 'Chaotic room of journalists with flashing cameras, microphones, high-pressure press conference environment',
+  statehouse: 'Exterior of a grand presidential palace, lush gardens, flags flying, official atmosphere',
+  cabinet: 'Interior situation room, high-tech screens, ministers in discussion, serious atmosphere',
 };
 

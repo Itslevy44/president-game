@@ -1,0 +1,56 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and game settings",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "GameState": {
+      "title": "GameState",
+      "description": "The current state of a player's game",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "playerName": { "type": "string" },
+        "countryName": { "type": "string" },
+        "difficulty": { "type": "string", "enum": ["Easy", "Statesman", "Iron Fist"] },
+        "year": { "type": "number" },
+        "quarter": { "type": "number" },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "economy": { "type": "number" },
+            "stability": { "type": "number" },
+            "approval": { "type": "number" },
+            "military": { "type": "number" },
+            "health": { "type": "number" }
+          }
+        },
+        "treasury": { "type": "number" },
+        "taxLevel": { "type": "string", "enum": ["Low", "Medium", "High"] },
+        "gamePhase": { "type": "string" },
+        "isGameOver": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "stats", "treasury"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Private user profile data"
+    },
+    "/games/{userId}": {
+      "schema": "GameState",
+      "description": "The player's current game state"
+    }
+  }
+}

@@ -44,6 +44,7 @@ export interface PressQuestion {
   id: string;
   journalist: string;
   outlet: string;
+  journalistImage?: string;
   question: string;
   options: {
     text: string;
@@ -71,6 +72,23 @@ export interface DiplomacyVisit {
   }[];
 }
 
+export interface SocialPost {
+  id: string;
+  author: string;
+  handle: string;
+  content: string;
+  sentiment: 'positive' | 'negative' | 'neutral';
+  timestamp: string;
+}
+
+export interface IntelReport {
+  id: string;
+  source: string;
+  content: string;
+  reliability: 'High' | 'Medium' | 'Low';
+  timestamp: string;
+}
+
 export interface GameState {
   playerName: string;
   countryName: string;
@@ -90,9 +108,12 @@ export interface GameState {
   };
   history: string[];
   isGameOver: boolean;
-  gamePhase: 'setup' | 'deputy_selection' | 'minister_selection' | 'playing' | 'ended' | 'press_conference' | 'diplomacy_visit';
+  taxLevel: 'Low' | 'Medium' | 'High';
+  gamePhase: 'setup' | 'deputy_selection' | 'minister_selection' | 'playing' | 'ended' | 'press_conference' | 'diplomacy_visit' | 'speech_builder';
   currentScenario: Scenario | null;
   currentPressQuestion: PressQuestion | null;
   currentDiplomacyVisit: DiplomacyVisit | null;
   logs: string[];
+  socialFeed: SocialPost[];
+  intelReports: IntelReport[];
 }

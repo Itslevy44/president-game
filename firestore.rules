@@ -1,0 +1,100 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - uid: string (required)
+    //   - email: string (required)
+    //   - displayName: string
+    //   - photoURL: string
+    //   - createdAt: timestamp
+    //
+    // Collection: games
+    // Document ID: {userId}
+    // Fields:
+    //   - userId: string (required)
+    //   - playerName: string
+    //   - countryName: string
+    //   - difficulty: string (Easy, Statesman, Iron Fist)
+    //   - year: number
+    //   - quarter: number
+    //   - stats: map (economy, stability, approval, military, health)
+    //   - treasury: number
+    //   - taxLevel: string (Low, Medium, High)
+    //   - gamePhase: string
+    //   - isGameOver: bool
+    //   - updatedAt: timestamp
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // Domain Validators
+    
+    function isValidUser(data) {
+      return data.uid == request.auth.uid &&
+             data.email is string && isValidEmail(data.email) &&
+             (data.displayName == null || (data.displayName is string && data.displayName.size() < 100)) &&
+             (data.photoURL == null || (data.photoURL is string && data.photoURL.size() < 500));
+    }
+
+    function isValidGameState(data) {
+      return data.userId == request.auth.uid &&
+             data.stats is map &&
+             data.stats.economy is number && data.stats.economy >= 0 && data.stats.economy <= 100 &&
+             data.stats.stability is number && data.stats.stability >= 0 && data.stats.stability <= 100 &&
+             data.stats.approval is number && data.stats.approval >= 0 && data.stats.approval <= 100 &&
+             data.stats.military is number && data.stats.military >= 0 && data.stats.military <= 100 &&
+             data.stats.health is number && data.stats.health >= 0 && data.stats.health <= 100 &&
+             data.treasury is number &&
+             data.taxLevel in ['Low', 'Medium', 'High'] &&
+             (data.playerName == null || (data.playerName is string && data.playerName.size() < 100)) &&
+             (data.countryName == null || (data.countryName is string && data.countryName.size() < 100));
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+    }
+
+    match /games/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidGameState(request.resource.data);
+      allow update: if isOwner(userId) && isValidGameState(request.resource.data);
+      allow delete: if isOwner(userId);
+    }
+
+    // Default deny
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}
